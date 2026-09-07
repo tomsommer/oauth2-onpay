@@ -126,22 +126,52 @@ class OnPay extends AbstractProvider
      */
     protected function checkResponse(ResponseInterface $response, $data): void
     {
-        if ($response->getStatusCode() < 400) {
+        $error = $this->errorMessage($data);
+
+        // A token endpoint is entitled to report a failure with a 200, and OnPay
+        // sometimes does. Going by the status alone lets an error body through to
+        // the token constructor, which fails far less legibly.
+        if ($response->getStatusCode() < 400 && null === $error) {
             return;
         }
 
-        $message = $response->getReasonPhrase();
-        if (is_array($data)) {
-            if (isset($data['errors'][0]['message'])) {
-                $message = $data['errors'][0]['message'];
-            } elseif (isset($data['error_description'])) {
-                $message = $data['error_description'];
-            } elseif (isset($data['error'])) {
-                $message = $data['error'];
-            }
+        throw new IdentityProviderException(
+            $error ?? $response->getReasonPhrase(),
+            $response->getStatusCode(),
+            $data
+        );
+    }
+
+    /**
+     * The message an error body carries, or null when it does not look like one.
+     *
+     * Anything non-scalar is reported as a fixed string rather than passed on:
+     * the exception constructor demands a string, so a hostile body would
+     * otherwise turn a failed grant into a TypeError.
+     *
+     * @param array<mixed>|string $data
+     */
+    private function errorMessage($data): ?string
+    {
+        if (!is_array($data)) {
+            return null;
         }
 
-        throw new IdentityProviderException($message, $response->getStatusCode(), $data);
+        $candidates = [
+            $data['errors'][0]['message'] ?? null,
+            $data['error_description'] ?? null,
+            $data['error'] ?? null,
+        ];
+
+        foreach ($candidates as $candidate) {
+            if (null === $candidate) {
+                continue;
+            }
+
+            return is_scalar($candidate) ? (string) $candidate : 'The authorization server reported an error.';
+        }
+
+        return null;
     }
 
     /**

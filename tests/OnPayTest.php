@@ -203,6 +203,64 @@ class OnPayTest extends TestCase
         $provider->getAccessToken('authorization_code', ['code' => 'a_code']);
     }
 
+    /**
+     * A token endpoint may report a failure with a 200. Going by the status
+     * alone lets the error body through to the token constructor, which fails
+     * as an InvalidArgumentException rather than an identity-provider error.
+     */
+    public function testErrorBodyWithASuccessStatusIsStillAFailure(): void
+    {
+        $provider = $this->provider([], [
+            new Response(200, ['content-type' => 'application/json'], (string) json_encode([
+                'error' => 'invalid_grant',
+                'error_description' => 'The refresh token is invalid',
+            ])),
+        ]);
+
+        $this->expectException(IdentityProviderException::class);
+        $this->expectExceptionMessage('The refresh token is invalid');
+        $provider->getAccessToken('refresh_token', ['refresh_token' => 'r']);
+    }
+
+    /**
+     * IdentityProviderException takes a string. A hostile body must not be able
+     * to turn a failed grant into a TypeError.
+     */
+    #[DataProvider('nonStringErrorMessageProvider')]
+    public function testNonStringErrorMessagesStillRaiseIdentityProviderException(string $body): void
+    {
+        $provider = $this->provider([], [
+            new Response(400, ['content-type' => 'application/json'], $body),
+        ]);
+
+        $this->expectException(IdentityProviderException::class);
+        $provider->getAccessToken('authorization_code', ['code' => 'c']);
+    }
+
+    /** @return array<string, string[]> */
+    public static function nonStringErrorMessageProvider(): array
+    {
+        return [
+            'message is an array' => ['{"errors":[{"message":["a","b"]}]}'],
+            'message is an object' => ['{"errors":[{"message":{"a":"b"}}]}'],
+            'error is an array' => ['{"error":["invalid_grant"]}'],
+            'message is an int' => ['{"errors":[{"message":42}]}'],
+        ];
+    }
+
+    public function testSuccessfulGrantIsUnaffected(): void
+    {
+        $provider = $this->provider([], [
+            new Response(200, ['content-type' => 'application/json'], (string) json_encode([
+                'access_token' => 'granted',
+                'token_type' => 'Bearer',
+                'expires_in' => 3600,
+            ])),
+        ]);
+
+        $this->assertSame('granted', $provider->getAccessToken('authorization_code', ['code' => 'c'])->getToken());
+    }
+
     public function testErrorResponseFallsBackToTheReasonPhrase(): void
     {
         $provider = $this->provider([], [
