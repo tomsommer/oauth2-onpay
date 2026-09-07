@@ -11,12 +11,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Tomsommer\\OAuth2\\Client\\Provider\\": "src/"
+            "TomSommer\\OAuth2\\Client\\Provider\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Tomsommer\\OAuth2\\Client\\Test\\Provider\\": "tests/"
+            "TomSommer\\OAuth2\\Client\\Test\\Provider\\": "tests/"
         }
     },
     "require": {

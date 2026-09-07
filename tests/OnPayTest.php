@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tomsommer\OAuth2\Client\Test\Provider;
+namespace TomSommer\OAuth2\Client\Test\Provider;
 
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Handler\MockHandler;
@@ -14,7 +14,7 @@ use League\OAuth2\Client\Token\AccessToken;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
-use Tomsommer\OAuth2\Client\Provider\OnPay;
+use TomSommer\OAuth2\Client\Provider\OnPay;
 
 class OnPayTest extends TestCase
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tomsommer\OAuth2\Client\Provider;
+namespace TomSommer\OAuth2\Client\Provider;
 
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;

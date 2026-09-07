@@ -14,12 +14,12 @@ composer require tomsommer/oauth2-onpay
 
 ## Usage
 
-Usage is the same as the League's OAuth client, using `Tomsommer\OAuth2\Client\Provider\OnPay` as the provider.
+Usage is the same as the League's OAuth client, using `TomSommer\OAuth2\Client\Provider\OnPay` as the provider.
 
 ### Authorization Code Flow
 
 ```php
-$provider = new Tomsommer\OAuth2\Client\Provider\OnPay([
+$provider = new TomSommer\OAuth2\Client\Provider\OnPay([
     'clientId'    => 'example.com',                     // your integration's identifier; the domain it runs on is conventional
     'redirectUri' => 'https://example.com/callback',
     'gatewayId'   => 'A5KM3QX7B',                       // optional, scopes authorization to one gateway
@@ -77,7 +77,7 @@ if (null === $newToken->getRefreshToken()) {
 PKCE is supported and off by default, because the verifier has to survive the redirect and only the calling application can store it:
 
 ```php
-$provider = new Tomsommer\OAuth2\Client\Provider\OnPay([
+$provider = new TomSommer\OAuth2\Client\Provider\OnPay([
     'clientId'    => 'example.com',
     'redirectUri' => 'https://example.com/callback',
     'pkceMethod'  => League\OAuth2\Client\Provider\AbstractProvider::PKCE_METHOD_S256,
