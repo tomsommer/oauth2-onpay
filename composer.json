@@ -1,0 +1,38 @@
+{
+    "name": "tomsommer/oauth2-onpay",
+    "type": "library",
+    "description": "OnPay.io OAuth 2.0 provider client for the PHP League's OAuth 2.0 Client",
+    "keywords": ["oauth", "oauth2", "onpay", "authorization", "authorisation", "sso", "client"],
+    "homepage": "https://github.com/tomsommer/oauth2-onpay",
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/tomsommer/oauth2-onpay/issues",
+        "source": "https://github.com/tomsommer/oauth2-onpay"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tomsommer\\OAuth2\\Client\\Provider\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tomsommer\\OAuth2\\Client\\Test\\Provider\\": "tests/"
+        }
+    },
+    "require": {
+        "php": ">=8.2",
+        "ext-json": "*",
+        "league/oauth2-client": "^2.8"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^2.0",
+        "phpunit/phpunit": "^11.4"
+    },
+    "scripts": {
+        "test": "phpunit",
+        "phpstan": "phpstan analyse"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
